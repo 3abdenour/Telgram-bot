@@ -1,6 +1,6 @@
-if __name__ == "__main__":
-    asyncio.run(main())
-  import ccxt, asyncio, random
+import ccxt
+import asyncio
+import random
 from telethon import TelegramClient
 from datetime import datetime
 import pandas as pd
@@ -25,7 +25,7 @@ def detect_double_top(df):
     if len(df) < 10:
         return False
     highs = df['high']
-    if highs[-3] < highs[-5] and abs(highs[-5] - highs[-1]) / highs[-5] < 0.01:
+    if highs.iloc[-3] < highs.iloc[-5] and abs(highs.iloc[-5] - highs.iloc[-1]) / highs.iloc[-5] < 0.01:
         return 'Double Top'
     return False
 
@@ -33,14 +33,27 @@ def detect_double_bottom(df):
     if len(df) < 10:
         return False
     lows = df['low']
-    if lows[-3] > lows[-5] and abs(lows[-5] - lows[-1]) / lows[-5] < 0.01:
+    if lows.iloc[-3] > lows.iloc[-5] and abs(lows.iloc[-5] - lows.iloc[-1]) / lows.iloc[-5] < 0.01:
         return 'Double Bottom'
     return False
 
-# المزيد من النماذج لاحقاً...
-
 async def send_trade(symbol, direction, entry, sl, targets, pattern):
-    message = f"""꧁༺ 𝓢𝓒𝓐𝓛𝓟𝓘𝓝𝓖 300 ༻꧂\n\n✬S◦C°A˚L°P◦I... {symbol} ...N◦G°3˚0°0◦0✬\n𝓓𝓲𝓻𝓮𝓬𝓽𝓲𝓸𝓷 : {direction}\nLeverage : Cross 25x\n★ Entry : {entry} ★\n\n🔥Stoploss : {sl}🔥\n\nPattern: {pattern}\n\nミ★ SCALPING ★彡\nTarget 1 - {targets[0]}\nTarget 2 - {targets[1]}\nTarget 3 - {targets[2]}\nTarget 4 - {targets[3]}\n"""
+    message = f"""꧁༺ 𝓢𝓒𝓐𝓛𝓟𝓘𝓝𝓖 300 ༻꧂
+
+✬S◦C°A˚L°P◦I... {symbol} ...N◦G°3˚0°0◦0✬
+𝓓𝓲𝓻𝓮𝓬𝓽𝓲𝓸𝓷 : {direction}
+Leverage : Cross 25x
+★ Entry : {entry} ★
+
+🔥Stoploss : {sl}🔥
+
+Pattern: {pattern}
+
+ミ★ SCALPING ★彡
+Target 1 - {targets[0]}
+Target 2 - {targets[1]}
+Target 3 - {targets[2]}
+Target 4 - {targets[3]}"""
     await client.send_message(channel, message)
 
 async def main():
